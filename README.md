@@ -16,14 +16,16 @@ could be x% of a SKU unit price.
 ## Assumptions:
 Promotions are mutually exclusive , only 1 promotion on a SKU will be applicable at a given point in time.
 
-
-
-
 ## Technologies used
 Spring boot (Java 8), h2 (in memory) -Database
 
 ## H2 database : 
 http://localhost:8080/h2-console
+
+## DB Schema :
+
+![E_R](https://user-images.githubusercontent.com/74326762/99197348-3f8f5a80-2792-11eb-8c89-e8e6a5f1e7fb.jpg)
+
 
 ## API
 
