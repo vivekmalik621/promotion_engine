@@ -10,8 +10,12 @@ import com.org.promotionengine.model.OrderResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**OrderProcessingService calls the promotionService to apply promotions on the requested order items/skus
+ * 
+ * @author Vivek Malik
+ *
+ */
 @Service
-@Slf4j
 public class OrderProcessingService {
 
 	@Autowired

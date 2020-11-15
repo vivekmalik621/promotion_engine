@@ -16,6 +16,11 @@ import com.org.promotionengine.repo.ProductRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
+/** PromotionService checks applicable promotion types and calculates the order price
+ * 
+ * @author Vivek Malik
+ *
+ */
 @Service
 @Slf4j
 public class PromotionService {
@@ -24,7 +29,7 @@ public class PromotionService {
     private ProductRepository productRepository;
 
     @Autowired
-    private PromotionFactory promotionFactory;
+    private PromotionFactory<OrderPromotionType> promotionFactory;
 
     public BigDecimal applyPromotion(final OrderRequest orderRequest) {
 

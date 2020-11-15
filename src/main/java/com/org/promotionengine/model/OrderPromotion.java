@@ -16,9 +16,9 @@ import lombok.Value;
 @ToString
 public class OrderPromotion {
 
-	  private BigDecimal orderPrice;
-	    private OrderItem orderItem;
-	    private Product product;
-	    private OrderRequest orderRequest;
-	    Map<String, Integer> appliedComboPromotionExcludedMap;
+	private BigDecimal orderPrice;
+	private OrderItem orderItem;
+	private Product product;
+	private OrderRequest orderRequest;
+	Map<String, Integer> appliedComboPromotionExcludedMap;
 }
