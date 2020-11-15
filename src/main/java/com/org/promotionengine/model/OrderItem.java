@@ -6,6 +6,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Value;
+
+@Value
+@Builder
+@EqualsAndHashCode
+@ToString
 public class OrderItem {
 
 	@NotNull
