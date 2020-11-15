@@ -44,4 +44,6 @@ public class PromotionServiceTest {
 	        Assert.assertEquals(new BigDecimal("80"), orderPrice);
 
 	    }
+	   
+	   
 }
