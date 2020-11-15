@@ -30,7 +30,7 @@ public class OrderController {
 		if(bindingResult.hasErrors()) {
 			return new ResponseEntity<OrderResponse>(HttpStatus.BAD_REQUEST);
 		}
-		OrderResponse orderResponse = new OrderResponse() ;
+		OrderResponse orderResponse = new OrderResponse(null) ;
 		return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.OK);
 	}
 	
