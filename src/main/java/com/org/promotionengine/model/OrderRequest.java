@@ -1,11 +1,10 @@
 package com.org.promotionengine.model;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-
-import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,5 +31,17 @@ public class OrderRequest {
 	public OrderRequest(
 		@JsonProperty("items") List<OrderItem> items) {
 		this.items = items;
+	}
+   
+	public static boolean isComboValid(OrderRequest orderRequest, Map<String, Integer> finalComboPromotionMap) {
+		return orderRequest.getItems().stream().allMatch(orderRequestItem -> {
+			Integer skuQuantity = finalComboPromotionMap.get(orderRequestItem.getSku());
+			if(skuQuantity == null) {
+				return true;
+			} else if(null!= skuQuantity && orderRequestItem.getQuantity() == skuQuantity) {
+				return true;
+			}
+			return false;
+		});
 	}
 }
