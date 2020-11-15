@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderProcessingService {
 
 	@Autowired
-	PromotionService promotionService;
+	private PromotionService promotionService;
 	
 	public OrderResponse processOrder(final OrderRequest orderRequest) {
         BigDecimal orderPrice = promotionService.applyPromotion(orderRequest);
