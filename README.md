@@ -23,6 +23,11 @@ Spring boot (Java 8), h2 (in memory) -Database
 http://localhost:8080/h2-console
 
 ## DB Schema :
+*One to one mapping between Product and Promotion table (as per mutually exclusive assumption)
+
+*Promotion.COMBO_REFERENCE_ID , entries should have same price (as combo price)
+
+*Initial data set is loaded from data.sql file present in project structure under src/main/resources
 
 ![E_R](https://user-images.githubusercontent.com/74326762/99197348-3f8f5a80-2792-11eb-8c89-e8e6a5f1e7fb.jpg)
 
