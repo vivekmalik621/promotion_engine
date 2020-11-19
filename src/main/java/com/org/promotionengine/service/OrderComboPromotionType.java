@@ -27,43 +27,43 @@ import com.org.promotionengine.repo.PromotionRepository;
 @Component
 public class OrderComboPromotionType implements OrderPromotionType {
 
-	@Autowired
-	private PromotionRepository promotionRepository;
+	  @Autowired
+	    private PromotionRepository promotionRepository;
+	    
+	    @Autowired
+	    private ProductRepository productRepository;
 
-	@Autowired
-    private ProductRepository productRepository;
-	
-	@Override
-	public BigDecimal process(final OrderPromotion orderPromotion) {
+	    @Override
+	    public BigDecimal process(final OrderPromotion orderPromotion) {
 
-		final Map<String, Integer> appliedComboExcludedItemsMap = orderPromotion.getAppliedComboPromotionExcludedMap();
-		final OrderItem orderItem = orderPromotion.getOrderItem();
-		final String requestedSku = orderItem.getSku();
-		final OrderRequest orderRequest = orderPromotion.getOrderRequest();
-		BigDecimal orderPrice = orderPromotion.getOrderPrice();
-		final Product product = orderPromotion.getProduct();
+	        final Map<String, Integer> appliedComboExcludedItemsMap = orderPromotion
+	            .getAppliedComboPromotionExcludedMap();
+	        final OrderItem orderItem = orderPromotion.getOrderItem();
+	        final String requestedSku = orderItem.getSku();
+	        final OrderRequest orderRequest = orderPromotion.getOrderRequest();
+	        BigDecimal orderPrice = orderPromotion.getOrderPrice();
+	        final Product product = orderPromotion.getProduct();
 
-		  final Promotion promotion = product.getPromotion();
+	        final Promotion promotion = product.getPromotion();
 	        
 			// check if requested order item has already been handled as part of earlier
 			// combo order processing
 			if (null == appliedComboExcludedItemsMap.get(requestedSku)) {
 
-				Map<String, Integer> comboPromotionMap = new HashMap<String, Integer>();
+				Map<String, Integer> comboPromotionMap = new HashMap<>();
 				// create comboPromotionMap with the all SKU's applicable for the given Combo
 				// Promotion
-				promotionRepository.findByComboReferenceId(promotion.getComboReferenceId()).stream().forEach(comboPromo -> {
-					comboPromotionMap.put(comboPromo.getProduct().getSku(), comboPromo.getQuantity());
-				});
+				promotionRepository.findByComboReferenceId(promotion.getComboReferenceId())
+	                .forEach(comboPromo -> comboPromotionMap.put(comboPromo.getProduct().getSku(), comboPromo.getQuantity()));
 
-				Map<String, Integer> comboOrderItemsMap = new HashMap<String, Integer>();
+				Map<String, Integer> comboOrderItemsMap = new HashMap<>();
 				// comboOrderItemsMap : contains all the requested skus matching the applicable Combo/offer
-				orderRequest.getItems().stream().forEach(orderRequestItem -> {
+				orderRequest.getItems().forEach(orderRequestItem -> {
 					if (comboPromotionMap.containsKey(orderRequestItem.getSku()))
 						comboOrderItemsMap.put(orderRequestItem.getSku(), orderRequestItem.getQuantity());
 				});
 
-				Map<String, Integer> unitPriceComboItemsMap = new HashMap<String, Integer>();
+				Map<String, Integer> unitPriceComboItemsMap = new HashMap<>();
 				Integer applicableCombos;
 
 				if (comboOrderItemsMap.size() == comboPromotionMap.size()) {
@@ -76,16 +76,14 @@ public class OrderComboPromotionType implements OrderPromotionType {
 						orderPrice = orderPrice.add(promotion.getPrice().multiply(new BigDecimal(applicableCombos)));
 
 						// identify unit orders/sku count for applicable combo items post applying applicable combos
-						unitPriceComboItemsMap = populateUnitPriceComboItemsMap(comboPromotionMap, comboOrderItemsMap,
-								unitPriceComboItemsMap, applicableCombos);
+	                    populateUnitPriceComboItemsMap(comboPromotionMap, comboOrderItemsMap,
+	                        unitPriceComboItemsMap, applicableCombos);
 
-						// if comboPromotion is valid on the requested item, then maintain the excluded
+	                    // if comboPromotion is valid on the requested item, then maintain the excluded
 						// items map to capture other sku's for the Combo Promotion
-						promotionRepository.findByComboReferenceId(promotion.getComboReferenceId()).stream()
-								.forEach(comboPromo -> {
-									appliedComboExcludedItemsMap.put(comboPromo.getProduct().getSku(),
-											comboPromo.getQuantity());
-								});
+						promotionRepository.findByComboReferenceId(promotion.getComboReferenceId())
+								.forEach(comboPromo -> appliedComboExcludedItemsMap.put(comboPromo.getProduct().getSku(),
+	                                    comboPromo.getQuantity()));
 					} else {
 						// if combo is not applicable, calculate using unit price for the SKU's.
 						orderPrice = orderPrice
@@ -107,36 +105,28 @@ public class OrderComboPromotionType implements OrderPromotionType {
 	        return orderPrice;
 	    }
 
-		private Map<String, Integer> populateUnitPriceComboItemsMap(Map<String, Integer> comboPromotionMap,
+		private void populateUnitPriceComboItemsMap(Map<String, Integer> comboPromotionMap,
 				Map<String, Integer> comboOrderItemsMap, Map<String, Integer> unitPriceComboItemsMap,
 				Integer applicableCombos) {
-			for(Map.Entry<String, Integer> entryComboOrderItem: comboOrderItemsMap.entrySet() ) {
-				  for(Map.Entry<String, Integer> entryOrderPromotion: comboPromotionMap.entrySet() ) {
-					  if(entryComboOrderItem.getKey().equals(entryOrderPromotion.getKey()))
-					  {
-						  Integer remainder=entryComboOrderItem.getValue()-(applicableCombos*entryOrderPromotion.getValue());
-						  unitPriceComboItemsMap.put(entryComboOrderItem.getKey(), remainder)	 ;
-					  }
-				  }
-			  }
-			return unitPriceComboItemsMap;
-		}
+
+	        comboOrderItemsMap.forEach((key1, value1) -> comboPromotionMap.forEach((key, value) -> {
+	            if (key1.equals(key)) {
+	                Integer remainder = value1 - (applicableCombos * value);
+	                unitPriceComboItemsMap.put(key1, remainder);
+	            }
+	        }));
+	    }
 
 		private Integer calculateApplicableCombos(Map<String, Integer> comboPromotionMap,
 				Map<String, Integer> comboOrderItemsMap) {
 			
-			List<Integer> logicalApplicableComboCountList = new ArrayList<Integer>();
-			
-			for(Map.Entry<String, Integer> entryOrder: comboOrderItemsMap.entrySet() ) {
-				  for(Map.Entry<String, Integer> entryCombo: comboPromotionMap.entrySet() ) {
-					  if(entryOrder.getKey().equals(entryCombo.getKey()))
-					  {
-						 Integer quotient= entryOrder.getValue()/entryCombo.getValue();
-						 logicalApplicableComboCountList.add(quotient);
-					  }
-				  }
-			  }
-			
+			List<Integer> logicalApplicableComboCountList = new ArrayList<>();
+	        comboOrderItemsMap.forEach((key1, value1) -> comboPromotionMap.forEach((key, value) -> {
+	            if (key1.equals(key)) {
+	                Integer quotient = value1 / value;
+	                logicalApplicableComboCountList.add(quotient);
+	            }
+	        }));
 			return Collections.min(logicalApplicableComboCountList);
 		}
 	}
